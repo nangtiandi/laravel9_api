@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\AuthApiController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -17,5 +17,18 @@ use Illuminate\Support\Facades\Route;
 //Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //    return $request->user();
 //});
-Route::apiResource('products',\App\Http\Controllers\ProductApiController::class);
-Route::apiResource("photos",\App\Http\Controllers\PhotoApiController::class);
+
+Route::prefix('v1')->group(function (){
+    Route::post('register',[AuthApiController::class,'register'])->name('auth.register');
+    Route::post('login',[AuthApiController::class,'login'])->name('auth.login');
+
+    Route::middleware(['auth:sanctum'])->group(function (){
+
+        Route::post('logout',[AuthApiController::class,'logout'])->name('auth.logout');
+        Route::post('token',[AuthApiController::class,'token'])->name('auth.token');
+
+        Route::apiResource('products',\App\Http\Controllers\ProductApiController::class);
+        Route::apiResource("photos",\App\Http\Controllers\PhotoApiController::class);
+
+    });
+});
